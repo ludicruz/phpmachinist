@@ -126,6 +126,9 @@ abstract class SqlStore implements StoreInterface
             case 'mysql':
                 require_once(__DIR__ . DIRECTORY_SEPARATOR . 'Mysql.php');
                 return new \DerpTest\Machinist\Store\Mysql($pdo);
+            case 'pgsql':
+                require_once(__DIR__ . DIRECTORY_SEPARATOR . 'Postgresql.php');
+                return new \DerpTest\Machinist\Store\Postgresql($pdo);
             default:
                 throw new \InvalidArgumentException("Unsupported PDO driver {$driver}.");
         }

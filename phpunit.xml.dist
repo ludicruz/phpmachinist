@@ -25,6 +25,9 @@
 		<env name="MySQL_Store_DSN" value="mysql:host=localhost"/>
 		<env name="MySQL_Store_User" value="root"/>
 		<env name="MySQL_Store_Password" value=""/>
+		<env name="Postgresql_Store_DSN" value="pgsql:host=localhost;dbname=machinist_test"/>
+		<env name="Postgresql_Store_User" value=""/>
+		<env name="Postgresql_Store_Password" value=""/>
 		<env name="Doctrine_Store_SQLite_DSN" value="sqlite::memory:" />
 		<env name="Doctrine_Store_Proxy_Root_Directory" value="/tmp/machinist/proxy" />
  	</php>
