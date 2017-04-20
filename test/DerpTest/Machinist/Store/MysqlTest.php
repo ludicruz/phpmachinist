@@ -17,7 +17,7 @@ class MysqlTest extends PHPUnit_Framework_TestCase
         $this->pdo->exec('CREATE DATABASE IF NOT EXISTS `machinist_test`;');
         $this->pdo->exec('USE `machinist_test`;');
         $this->pdo->exec('DROP TABLE IF EXISTS `stuff`;');
-        $this->pdo->exec('create table `stuff` ( `id` INTEGER PRIMARY KEY AUTO_INCREMENT, `name` varchar(100) );');
+        $this->pdo->exec('create table `stuff` ( `id` INTEGER PRIMARY KEY AUTO_INCREMENT, `name` varchar(100), `active` BIT(1));');
         $this->pdo->exec('DROP TABLE IF EXISTS `some_stuff`;');
         $this->pdo->exec('CREATE TABLE `some_stuff` (
 												`some_id` int(10) unsigned NOT NULL,
@@ -66,6 +66,12 @@ class MysqlTest extends PHPUnit_Framework_TestCase
     public function testInsertReturnsKey()
     {
         $id = $this->driver->insert('stuff', array('name' => 'stupid'));
+        $this->assertEquals(1, $id);
+    }
+
+    public function testInsertIntoBitField()
+    {
+        $id = $this->driver->insert('stuff', array('name' => 'stupid', 'active' => true));
         $this->assertEquals(1, $id);
     }
 

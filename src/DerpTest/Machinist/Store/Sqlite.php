@@ -87,4 +87,9 @@ class Sqlite extends SqlStore
     {
         return '"' . $column . '"';
     }
+
+    public function getPreparedTokens($data)
+    {
+        return array_pad(array(), count($data), '?');
+    }
 }

@@ -17,8 +17,9 @@ abstract class SqlStore implements StoreInterface
     public function insert($table, $data)
     {
         $columns = array_map(array($this, 'quoteColumn'), array_keys($data));
+        $preparedTokens = $this->getPreparedTokens($data);
 
-        $query = 'INSERT INTO ' . $this->quoteTable($table) . ' (' . join(',', $columns) . ') VALUES(' . trim(str_repeat('?,', count($data)), ',') . ')';
+        $query = 'INSERT INTO ' . $this->quoteTable($table) . ' (' . join(',', $columns) . ') VALUES(' . join(',', $preparedTokens) . ')';
         $stmt = $this->pdo()->prepare($query);
         $stmt->execute(array_values($data));
         return $this->pdo->lastInsertId();
@@ -137,6 +138,8 @@ abstract class SqlStore implements StoreInterface
     abstract public function quoteTable($table);
 
     abstract public function quoteColumn($column);
+
+    abstract public function getPreparedTokens($data);
 
     public function quoteValue($value)
     {

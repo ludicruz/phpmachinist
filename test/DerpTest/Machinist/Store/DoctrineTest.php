@@ -45,7 +45,7 @@ class DoctrineTest extends \PHPUnit_Framework_TestCase
         $schema_tool->createSchema($metadatas);
 
         $this->driver = new Doctrine($this->em,
-            array('DerpTest\Machinist\\Store\\TestEntity\\Doctrine'));
+            array('DerpTest\\Machinist\\Store\\TestEntity\\Doctrine'));
     }
 
     protected function tearDown()

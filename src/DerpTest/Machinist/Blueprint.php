@@ -19,6 +19,13 @@ class Blueprint
         $this->store = $store;
     }
 
+    public function addDefault($name, $value) {
+        if (!is_array($this->defaults)) {
+            $this->defaults = array();
+        }
+        $this->defaults[$name] = $value;
+    }
+
     /**
      * Does this blueprint have a column with the provided name that is a relationship?
      * @param  $field
@@ -142,7 +149,11 @@ class Blueprint
                 foreach ($relationships as $k => $r) {
                     $local = $r->getLocal();
                     if (!empty($row->$local)) {
-                        $machine->set($k, $r->getBlueprint()->findOne($row->$local));
+                        $found = $row->$local;
+                        if (!is_object($row->$local)) {
+                            $found = $r->getBlueprint()->findOne($row->$local);
+                        }
+                        $machine->set($k, $found);
                     }
                 }
             }

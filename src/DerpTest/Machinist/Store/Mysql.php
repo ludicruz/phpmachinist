@@ -70,6 +70,19 @@ class Mysql extends SqlStore
         return '`' . $column . '`';
     }
 
+    public function getPreparedTokens($data)
+    {
+        $retVal = array();
+
+        foreach($data as $datum) {
+            // TODO: make more better
+            // for now naively use the b for bit fields when a boolean is used
+            $retVal[] = is_bool($datum) ? 'b?' : '?';
+        }
+
+        return $retVal;
+    }
+
     public function isForeignKeyChecksEnabled() {
         $stmt = $this->pdo()->prepare("SELECT @@foreign_key_checks");
         $stmt->execute();

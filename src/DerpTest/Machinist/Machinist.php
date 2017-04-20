@@ -22,6 +22,10 @@ class Machinist
         $this->blueprints[$name] = $bp;
     }
 
+    /**
+     * @param $name
+     * @return Blueprint
+     */
     public function getBlueprint($name)
     {
         return array_key_exists($name, $this->blueprints) ? $this->blueprints[$name] : null;

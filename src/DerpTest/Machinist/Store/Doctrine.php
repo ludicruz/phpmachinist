@@ -3,6 +3,7 @@ namespace DerpTest\Machinist\Store;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 /**
  * Doctrine 2 driver for PHP Machinist
@@ -40,6 +41,11 @@ class Doctrine implements StoreInterface
         $this->_em = $em;
         $this->_namespaces = $namespaces;
         $this->_conversion_cache = array();
+    }
+
+    public function getEntityManager()
+    {
+        return $this->_em;
     }
 
     protected function columns($table)
@@ -83,7 +89,26 @@ class Doctrine implements StoreInterface
         $entity = new $class_name();
         $meta = $this->_em->getClassMetadata($class_name);
         foreach ($data as $field => $value) {
-            $meta->setFieldValue($entity, $field, $value);
+            if ($meta->hasAssociation($field)) {
+                $association = $meta->getAssociationMapping($field);
+                $foundEntity = $this->_em->find($association['targetEntity'], $value);
+                if ($foundEntity) {
+                    $meta->setFieldValue($entity, $field, $foundEntity);
+                }
+            } else {
+                // set hte value to whatever type it needs!! ESPECIALLY DATETIME!!!!
+                switch($meta->fieldMappings[$field]['type']) {
+                    case 'date':
+                    case 'time':
+                    case 'datetime':
+                    case 'datetimetz':
+                        if (!$value instanceof \DateTimeInterface && !is_null($value)) {
+                            $value = new \DateTime($value);
+                        }
+                        break;
+                }
+                $meta->setFieldValue($entity, $field, $value);
+            }
         }
         $this->_em->persist($entity);
         $this->_em->flush();
@@ -116,8 +141,8 @@ class Doctrine implements StoreInterface
         $entities = $this->_em->getRepository($class_name)->findAll();
         foreach ($entities as $entity) {
             $this->_em->remove($entity);
+            $this->_em->flush($entity);
         }
-        $this->_em->flush();
     }
 
     /**
@@ -204,5 +229,9 @@ class Doctrine implements StoreInterface
     protected function resetConversionCache()
     {
         $this->_conversion_cache = array();
+    }
+
+    public static function isManyToMany($type) {
+        return $type === ClassMetadataInfo::MANY_TO_MANY;
     }
 }

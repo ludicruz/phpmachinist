@@ -73,11 +73,23 @@ class Postgresql extends SqlStore
 
     public function quoteTable($table)
     {
-        return '"' . $table . '"';
+        return '"' . strtolower($table) . '"';
     }
 
     public function quoteColumn($column)
     {
-        return '"' . $column . '"';
+        return '"' . strtolower($column) . '"';
+    }
+
+    public function getPreparedTokens($data)
+    {
+        return array_pad(array(), count($data), '?');
+    }
+
+    public function wipe($table, $truncate)
+    {
+        $this->pdo()->exec("ALTER TABLE \"${table}\" DISABLE TRIGGER ALL;");
+        parent::wipe($table, $truncate);
+        $this->pdo()->exec("ALTER TABLE \"${table}\" ENABLE TRIGGER ALL;");
     }
 }
